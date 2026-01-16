@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm
 from .models import Customer
 
@@ -47,11 +48,62 @@ def register_user(request):
     else:
         form = RegisterForm()
         return render(request, 'register.html', {'form': form})
-    
+
+@login_required
 def customer_record(request, pk):
-    if request.user.is_authenticated:
-        customer = Customer.objects.get(id=pk)
-        return render(request, 'customer.html', {'customer': customer})
+    customer = Customer.objects.get(id=pk)
+    return render(request, 'customer.html', {'customer': customer})
+
+@login_required
+def edit_customer(request, pk):
+    customer = Customer.objects.get(id=pk)
+    if request.method == 'POST':
+        customer.first_name = request.POST['first_name']
+        customer.last_name = request.POST['last_name']
+        customer.phone_number = request.POST['phone_number']
+        customer.email = request.POST['email']
+        customer.address = request.POST['address']
+        customer.city = request.POST['city']
+        customer.state = request.POST['state']
+        customer.zip_code = request.POST['zip_code']
+        customer.save()
+        messages.success(request, 'Customer record updated successfully.')
+        return redirect('customer', pk=customer.id)
     else:
-        messages.error(request, 'You must be logged in to view this page.')
+        return render(request, 'edit_customer.html', {'customer': customer})
+    
+@login_required
+def add_customer(request):
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        phone_number = request.POST['phone_number']
+        email = request.POST['email']
+        address = request.POST['address']
+        city = request.POST['city']
+        state = request.POST['state']
+        zip_code = request.POST['zip_code']
+        Customer.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            email=email,
+            address=address,
+            city=city,
+            state=state,
+            zip_code=zip_code
+        )
+        messages.success(request, 'New customer added successfully.')
         return redirect('home')
+    else:
+        return render(request, 'add_customer.html')
+
+@login_required
+def delete_customer(request, pk):
+    customer = Customer.objects.get(id=pk)
+    if request.method == 'POST':
+        customer.delete()
+        messages.success(request, 'Customer record deleted successfully.')
+        return redirect('home')
+    else:
+        return render(request, 'delete_customer.html', {'customer': customer})

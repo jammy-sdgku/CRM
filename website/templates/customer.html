@@ -2,17 +2,27 @@
 
 {% block content %}
 
-<h1>Customer Record:</h1>
-
-<p>Name: {{ customer.first_name }} {{ customer.last_name }}</p>
-<p>Email: {{ customer.email }}</p>
-<p>Phone Number: {{ customer.phone_number }}</p>
-<p>Address: {{ customer.address }}</p>  
-<p>City: {{ customer.city }}</p>
-<p>State: {{ customer.state }}</p>
-<p>Zip Code: {{ customer.zip_code }}</p><br>        
-<p>Created: {{ customer.created_at }}</p>
-<p>Updated: {{ customer.updated_at }}</p>
+<div class="card">
+  <div class="card-header"><strong>
+    {{ customer.first_name }} {{ customer.last_name }}</strong>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Email: </h5>
+        <p class="card-text">{{ customer.email }}</p>
+    <h5 class="card-title">Phone Number:</h5> 
+        <p class="card-text">{{ customer.phone_number }}</p> 
+    <h5 class="card-title">Address Information:</h5> 
+        <p class="card-text">{{ customer.address }}</p>
+        <p class="card-text">{{ customer.city }}, {{ customer.state }} {{ customer.zip_code }}</p>
+    <br>        
+    <p>Created: {{ customer.created_at }}</p>
+    <p>Updated: {{ customer.updated_at }}</p>
+  </div>
+</div>
+<br>
+<a href="{% url 'home' %}" class="btn btn-secondary">Back to Customer List</a>
+<a href="{% url 'edit_customer' pk=customer.id %}" class="btn btn-primary">Edit Customer</a>
+<a href="{% url 'delete_customer' pk=customer.id %}" class="btn btn-danger">Delete Customer</a>
 
 
 {% endblock %}
