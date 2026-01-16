@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
+from .forms import RegisterForm, AddCustomerForm
 from .models import Customer
 
 
@@ -75,28 +75,15 @@ def edit_customer(request, pk):
 @login_required
 def add_customer(request):
     if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        phone_number = request.POST['phone_number']
-        email = request.POST['email']
-        address = request.POST['address']
-        city = request.POST['city']
-        state = request.POST['state']
-        zip_code = request.POST['zip_code']
-        Customer.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            phone_number=phone_number,
-            email=email,
-            address=address,
-            city=city,
-            state=state,
-            zip_code=zip_code
-        )
-        messages.success(request, 'New customer added successfully.')
-        return redirect('home')
+        form = AddCustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'New customer added successfully.')
+            return redirect('home')
     else:
-        return render(request, 'add_customer.html')
+        form = AddCustomerForm()
+    return render(request, 'add_customer.html', {'form': form})
+
 
 @login_required
 def delete_customer(request, pk):
