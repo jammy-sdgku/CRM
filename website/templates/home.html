@@ -5,7 +5,29 @@
 
     {% if user.is_authenticated %}
 
-        <h1>Welcome, {{ user.username }}!</h1>
+        <h3>Welcome, {{ user.username }}!</h3><br>
+        <h2>CRM Customer List</h2>
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Record Id</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td><a href="{% url 'customer' customer.id %}">{{ customer.id }}</a></td>
+                    <td>{{ customer.first_name }}</td>
+                    <td>{{ customer.last_name }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.phone_number }}</td>
+                {% endfor %}
+            </tbody>
+        </table>
 
     {% else %}   
 

@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import RegisterForm
+from .models import Customer
 
 
 def home(request):
+    customers = Customer.objects.all()
+    
     if request.method == 'POST':
         username = request.POST['userName']
         password = request.POST['password']
@@ -18,7 +21,7 @@ def home(request):
             messages.error(request, 'Invalid username or password.')
             return redirect('home')
     else:   
-        return render(request, 'home.html', {}) 
+        return render(request, 'home.html', {'customers': customers}) 
 
 
 def logout_user(request):
@@ -45,3 +48,10 @@ def register_user(request):
         form = RegisterForm()
         return render(request, 'register.html', {'form': form})
     
+def customer_record(request, pk):
+    if request.user.is_authenticated:
+        customer = Customer.objects.get(id=pk)
+        return render(request, 'customer.html', {'customer': customer})
+    else:
+        messages.error(request, 'You must be logged in to view this page.')
+        return redirect('home')
