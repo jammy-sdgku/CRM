@@ -55,6 +55,18 @@ def customer_record(request, pk):
     return render(request, 'customer.html', {'customer': customer})
 
 @login_required
+def add_customer(request):
+    if request.method == 'POST':
+        form = AddCustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'New customer added successfully.')
+            return redirect('home')
+    else:
+        form = AddCustomerForm()
+    return render(request, 'add_customer.html', {'form': form})
+
+@login_required
 def edit_customer(request, pk):
     customer = Customer.objects.get(id=pk)
     if request.method == 'POST':
@@ -71,19 +83,6 @@ def edit_customer(request, pk):
         return redirect('customer', pk=customer.id)
     else:
         return render(request, 'edit_customer.html', {'customer': customer})
-    
-@login_required
-def add_customer(request):
-    if request.method == 'POST':
-        form = AddCustomerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'New customer added successfully.')
-            return redirect('home')
-    else:
-        form = AddCustomerForm()
-    return render(request, 'add_customer.html', {'form': form})
-
 
 @login_required
 def delete_customer(request, pk):
